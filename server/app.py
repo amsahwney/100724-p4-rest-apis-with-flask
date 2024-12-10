@@ -13,7 +13,7 @@ def index():
 def get_all_landlords():
 
     all_landlord = Landlord.query.all()
-    landlord_dicts = [ landlord.to_dict() for landlord in all_landlord]
+    landlord_dicts = [ landlord.to_dict(rules = ["-violations"]) for landlord in all_landlord]
     return landlord_dicts, 200
 
     # do the same thing in one line
@@ -32,6 +32,8 @@ def get_landlord_by_id(landlord_id):
         # 3. send a 404 if it doesn't exist
         return { "status": 404, "message": "Not Found" }, 404 
 
+# argument for to_dict
+# rules = ['currently_in_litigation', "violations", "litigation_for_offenses"]
 
 
 #POST REQUEST TO MAKE A NEW LANDLORD
@@ -42,10 +44,7 @@ def create_new_landlords():
 
     try:
         # 2. create a new landlord instance using the parsed body
-        new_landlord = Landlord(
-            associated_llcs = body.get('associated_llcs'), 
-            violations = body.get('violations'), 
-            currently_in_litigation = body.get('currently_in_litigation'))
+        new_landlord = Landlord(associated_llcs = body.get('associated_llcs'))
         
         # 3. add and commit the new landlord 
         db.session.add( new_landlord )
